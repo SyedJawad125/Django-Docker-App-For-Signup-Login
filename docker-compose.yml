@@ -1,0 +1,101 @@
+# version: '3'
+
+# services:
+#   db:
+#     image: postgres:13
+#     environment:
+#       POSTGRES_DB: dockerdatabase_project
+#       POSTGRES_USER: mydb
+#       POSTGRES_PASSWORD: admin
+#     # ports:
+#     #   - "5432:5432"  
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#     networks:
+#       - django_network
+
+#   web:
+#     build: .
+#     command: python manage.py runserver 0.0.0.0:8000
+#     # command: >
+#     #   sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+#     volumes:
+#       - .:/app
+#     ports:
+#       - "8000:8000"
+#     environment:
+#       - DB_NAME=dockerdatabase_project
+#       - DB_USER=mydb
+#       - DB_PASSWORD=admin
+#       - DB_HOST=db
+#       # - DB_PORT=5432
+#     depends_on:
+#       - db
+#     networks:
+#       - django_network
+
+# volumes:
+#   postgres_data:
+
+# networks:
+#   django_network:
+#     driver: bridge
+
+
+# version: '3'
+# services:
+#   web:
+#     build: .
+#     environment:
+#       - POSTGRES_DB=dockerdatabase_project  # This should match the database Django is looking for
+#       - POSTGRES_USER=mydb
+#       - POSTGRES_PASSWORD=admin
+#     depends_on:
+#       - db
+#   db:
+#     image: postgres:13
+#     environment:
+#       POSTGRES_DB: dockerdatabase_project
+#       POSTGRES_USER: mydb
+#       POSTGRES_PASSWORD: admin
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data/
+# volumes:
+#   postgres_data:
+
+
+version: '3'
+
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: mydb
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: sepdatabase
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mydb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_NAME: sepdatabase
+      DB_USER: mydb
+      DB_PASSWORD: admin
+      DB_HOST: db
+      DB_PORT: 5432
+
+
