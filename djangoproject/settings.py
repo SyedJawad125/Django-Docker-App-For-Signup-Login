@@ -94,7 +94,7 @@ def wait_for_db():
                 dbname=os.getenv('DB_NAME', 'mydb'),
                 user=os.getenv('DB_USER', 'mydb'),
                 password=os.getenv('DB_PASSWORD', 'admin'),
-                host=os.getenv('DB_HOST', 'db'),
+                host=os.getenv('DB_HOST', 'localhost '),
                 port=os.getenv('DB_PORT', '5432')
             )
             db_up = True
@@ -103,7 +103,7 @@ def wait_for_db():
                 print('Database does not exist yet, waiting for 5 seconds...')
             else:
                 print('Database unavailable, waiting for 5 seconds...')
-            time.sleep(20)
+            time.sleep(10)
     conn.close()
 
 
