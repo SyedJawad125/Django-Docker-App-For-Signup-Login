@@ -95,7 +95,7 @@ services:
       DB_NAME: mydb
       DB_USER: mydb
       DB_PASSWORD: admin
-      DB_HOST: db 
+      DB_HOST: db
       DB_PORT: 5432
 
 

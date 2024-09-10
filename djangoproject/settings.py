@@ -94,7 +94,7 @@ def wait_for_db():
                 dbname=os.getenv('DB_NAME', 'mydb'),
                 user=os.getenv('DB_USER', 'mydb'),
                 password=os.getenv('DB_PASSWORD', 'admin'),
-                host=os.getenv('DB_HOST', 'localhost '),
+                host=os.getenv('DB_HOST', 'db'),
                 port=os.getenv('DB_PORT', '5432')
             )
             db_up = True
