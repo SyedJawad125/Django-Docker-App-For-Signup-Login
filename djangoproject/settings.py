@@ -91,16 +91,19 @@ def wait_for_db():
     while not db_up:
         try:
             conn = psycopg2.connect(
-                dbname=os.getenv('DB_NAME', 'sepdatabase'),
+                dbname=os.getenv('DB_NAME', 'mydb'),
                 user=os.getenv('DB_USER', 'mydb'),
                 password=os.getenv('DB_PASSWORD', 'admin'),
                 host=os.getenv('DB_HOST', 'db'),
                 port=os.getenv('DB_PORT', '5432')
             )
             db_up = True
-        except OperationalError:
-            print('Database unavailable, waiting for 5 seconds...')
-            time.sleep(5)
+        except psycopg2.OperationalError as e:
+            if "does not exist" in str(e):
+                print('Database does not exist yet, waiting for 5 seconds...')
+            else:
+                print('Database unavailable, waiting for 5 seconds...')
+            time.sleep(20)
     conn.close()
 
 
@@ -110,7 +113,7 @@ def wait_for_db():
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'sepdatabase'),
+        'NAME': os.getenv('DB_NAME', 'mydb'),
         'USER': os.getenv('DB_USER', 'mydb'),
         'PASSWORD': os.getenv('DB_PASSWORD', 'admin'),
         'HOST': os.getenv('DB_HOST', 'db'),
