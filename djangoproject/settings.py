@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user_auth',
     'permissions',
-    'docker_app',
+    # 'docker_app',
+    'myapp'
 ]
 
 MIDDLEWARE = [
@@ -162,3 +163,14 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Redis settings for Celery
+CELERY_BROKER_URL = 'redis://redis:6379/0'  # Ensure this matches the Redis service in docker-compose
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'  # Optional, but useful if you want to store results in Redis
+
+# Optional Celery settings:
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'  # Adjust if you have a different timezone

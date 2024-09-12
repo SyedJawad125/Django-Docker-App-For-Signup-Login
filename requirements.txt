@@ -13,3 +13,5 @@ tzdata==2024.1
 psycopg2-binary>=2.9,<3.0
 djangorestframework
 djangorestframework-simplejwt
+celery>=5.2
+redis>=4.1.0

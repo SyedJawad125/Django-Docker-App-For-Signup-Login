@@ -1,3 +1,5 @@
+# For Sql lite database:configs:
+
 # version: '3'
 
 # services:
@@ -42,26 +44,70 @@
 #     driver: bridge
 
 
+# # Last wala
 # version: '3'
+
 # services:
-#   web:
-#     build: .
-#     environment:
-#       - POSTGRES_DB=dockerdatabase_project  # This should match the database Django is looking for
-#       - POSTGRES_USER=mydb
-#       - POSTGRES_PASSWORD=admin
-#     depends_on:
-#       - db
 #   db:
-#     image: postgres:13
+#     image: postgres
 #     environment:
-#       POSTGRES_DB: dockerdatabase_project
 #       POSTGRES_USER: mydb
 #       POSTGRES_PASSWORD: admin
+#       POSTGRES_DB: mydb
 #     volumes:
-#       - postgres_data:/var/lib/postgresql/data/
-# volumes:
-#   postgres_data:
+#       - ./data/db:/var/lib/postgresql/data
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U mydb"]
+#       interval: 30s
+#       timeout: 10s
+#       retries: 10
+
+#   web:
+#     build: .
+#     command: python manage.py runserver 0.0.0.0:8000
+#     volumes:
+#       - .:/code
+#     ports:
+#       - "8000:8000"
+#     depends_on:
+#       db:
+#         condition: service_healthy
+#     environment:
+#       DB_NAME: mydb
+#       DB_USER: mydb
+#       DB_PASSWORD: admin
+#       DB_HOST: db
+#       DB_PORT: 5432
+
+#   redis:
+#     image: "redis:alpine"
+#     ports:
+#       - "6379:6379"
+#     restart: unless-stopped
+#     healthcheck:
+#       test: ["CMD", "redis-cli", "ping"]
+#       interval: 30s
+#       timeout: 10s
+#       retries: 5
+
+#   celery:
+#     build: .
+#     command: celery -A djangoproject worker --loglevel=info
+#     volumes:
+#       - .:/code
+#     depends_on:
+#       redis:
+#         condition: service_healthy
+
+#   celery-beat:
+#     build: .
+#     command: celery -A djangoproject beat --loglevel=info
+#     volumes:
+#       - .:/code
+#     depends_on:
+#       redis:
+#         condition: service_healthy
+
 
 
 version: '3'
@@ -98,4 +144,35 @@ services:
       DB_HOST: db
       DB_PORT: 5432
 
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
+  celery:
+    build: .
+    command: celery -A djangoproject worker --loglevel=info
+    volumes:
+      - .:/code
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+
+  celery-beat:
+    build: .
+    command: celery -A djangoproject beat --loglevel=info
+    volumes:
+      - .:/code
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
