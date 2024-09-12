@@ -51,8 +51,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user_auth',
     'permissions',
-    # 'docker_app',
-    'myapp'
+    'hrm_app'
+    # 'sessions',
+    # 'myapp'
 ]
 
 MIDDLEWARE = [
