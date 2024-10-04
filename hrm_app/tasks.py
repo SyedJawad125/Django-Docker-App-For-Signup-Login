@@ -7,7 +7,7 @@ def send_email_task(subject, message, recipient_list):
     send_mail(
         subject,
         message,
-        settings.EMAIL_HOST_USER,
+        settings.DEFAULT_FROM_EMAIL,
         recipient_list,
         fail_silently=False,
     )

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from hrm_app.hrm_e_controller import AttendanceController, DepartmentController, EmployeeController, RankController, SalaryController
+from hrm_app.hrm_e_controller import AttendanceController, CeleryController, DepartmentController, EmployeeController, RankController, SalaryController
 from utils.base_authentication import JWTAuthentication
 from rest_framework.viewsets import ModelViewSet
 
@@ -9,6 +9,8 @@ department_controller = DepartmentController()
 salary_controller = SalaryController()
 rank_controller = RankController()
 attendance_controller = AttendanceController()
+celery_controller = CeleryController()
+
 
 
 
@@ -98,15 +100,7 @@ from django.http import JsonResponse
 from .tasks import send_email_task
 
 class SendEmailViews(ModelViewSet):
-
-    def send_email_view(request):
-        if request.method == 'POST':
-            subject = request.POST.get('subject', 'Test Email')
-            message = request.POST.get('message', 'This is a test email.')
-            recipient_list = request.POST.getlist('recipients', ['nicenick1992@gmail.com.com'])
-
-            # Call the Celery task to send the email
-            send_email_task.delay(subject, message, recipient_list)
-
-            return JsonResponse({'status': 'Email has been sent to the Celery worker.'})
-        return JsonResponse({'error': 'Invalid request method.'}, status=400)
+    def post_celerys(self, request):
+        return celery_controller.post_celerys(request)
+    
+    

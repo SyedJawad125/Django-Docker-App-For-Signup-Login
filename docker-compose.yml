@@ -1,47 +1,32 @@
-For Sql lite database:configs:
-
+# For Sql Lite Database
 version: '3'
 
 services:
-  db:
-    image: postgres:13
-    environment:
-      POSTGRES_DB: dockerdatabase_project
-      POSTGRES_USER: mydb
-      POSTGRES_PASSWORD: admin
-    # ports:
-    #   - "5432:5432"  
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - django_network
-
   web:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
-    # command: >
-    #   sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
     ports:
       - "8000:8000"
     environment:
-      - DB_NAME=dockerdatabase_project
-      - DB_USER=mydb
-      - DB_PASSWORD=admin
-      - DB_HOST=db
-      # - DB_PORT=5432
-    depends_on:
-      - db
+      - DEBUG=True
+      - CELERY_BROKER_URL=redis://redis:6379/0  # Set the Redis broker URL
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0  # Set the Redis result backend
     networks:
       - django_network
 
-volumes:
-  postgres_data:
+  redis:
+    image: redis:alpine  # Use the Alpine version of Redis for a smaller footprint
+    ports:
+      - "6379:6379"  # Expose Redis on port 6379
+    networks:
+      - django_network
 
 networks:
   django_network:
     driver: bridge
+
 
 
 # # Last wala

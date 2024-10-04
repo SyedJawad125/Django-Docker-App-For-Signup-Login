@@ -498,3 +498,26 @@ class AttendanceController:
                 return Response({"data": "ID NOT PROVIDED"}, 400)
         except Exception as e:
             return Response({'error': str(e)}, 500)
+        
+
+from django.http import JsonResponse
+from django.views import View  # Use Django's class-based view
+from .tasks import send_email_task
+
+class CeleryController(View):
+    
+    # The method now correctly accepts `self` and `request`
+    def post_celerys(self, request):
+        if request.method == 'POST':
+            # Fetch data from POST request
+            subject = request.POST.get('subject', 'Test Email')
+            message = request.POST.get('message', 'This is a test email.')
+            recipient_list = request.POST.getlist('recipients', ['nicenick1992@gmail.com'])
+
+            # Call the Celery task to send the email asynchronously
+            send_email_task.delay(subject, message, recipient_list)
+
+            return JsonResponse({'status': 'Email has been sent to the Celery worker.'})
+        
+        # Handle invalid request method
+        return JsonResponse({'error': 'Invalid request method.'}, status=400)

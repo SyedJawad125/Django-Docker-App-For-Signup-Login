@@ -185,9 +185,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Celery settings
-CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Redis as broker
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'  # Store results in Redis
+# CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Redis as broker
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'  # Store results in Redis
 
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
 # Email backend settings (for sending emails)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # Use your email provider
@@ -195,3 +197,4 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'syedjawadali92@gmail.com'  # Your email
 EMAIL_HOST_PASSWORD = 'ctpgxfclwyucweni'  # Your email password
+DEFAULT_FROM_EMAIL = 'your_email@example.com' 
