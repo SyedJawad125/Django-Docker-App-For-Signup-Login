@@ -197,4 +197,4 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'syedjawadali92@gmail.com'  # Your email
 EMAIL_HOST_PASSWORD = 'ctpgxfclwyucweni'  # Your email password
-DEFAULT_FROM_EMAIL = 'your_email@example.com' 
+DEFAULT_FROM_EMAIL = 'syedjawadali92@gmail.com' 

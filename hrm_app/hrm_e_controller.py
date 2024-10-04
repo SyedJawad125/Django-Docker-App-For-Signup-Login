@@ -503,21 +503,47 @@ class AttendanceController:
 from django.http import JsonResponse
 from django.views import View  # Use Django's class-based view
 from .tasks import send_email_task
+import json
 
 class CeleryController(View):
     
     # The method now correctly accepts `self` and `request`
     def post_celerys(self, request):
         if request.method == 'POST':
-            # Fetch data from POST request
-            subject = request.POST.get('subject', 'Test Email')
-            message = request.POST.get('message', 'This is a test email.')
-            recipient_list = request.POST.getlist('recipients', ['nicenick1992@gmail.com'])
+            try:
+                # Parse JSON payload
+                data = json.loads(request.body)
 
-            # Call the Celery task to send the email asynchronously
-            send_email_task.delay(subject, message, recipient_list)
+                # Fetch data from JSON request
+                subject = data.get('subject', 'Test Email')
+                message = data.get('message', 'This is a test email.')
+                recipient_list = data.get('recipient_list', ['nicenick1992@gmail.com'])
 
-            return JsonResponse({'status': 'Email has been sent to the Celery worker.'})
+                # Call the Celery task to send the email asynchronously
+                send_email_task.delay(subject, message, recipient_list)
+
+                return JsonResponse({'status': 'Email has been sent to the Celery worker.'})
+            except json.JSONDecodeError:
+                return JsonResponse({'error': 'Invalid JSON payload.'}, status=400)
         
         # Handle invalid request method
         return JsonResponse({'error': 'Invalid request method.'}, status=400)
+
+
+# # Without Celery Code:
+#      def post_celerys(self, request):
+#         if request.method == 'POST':
+#             try:
+#                 data = json.loads(request.body)
+#                 subject = data.get('subject', 'Test Email')
+#                 message = data.get('message', 'This is a test email.')
+#                 recipient_list = data.get('recipient_list', ['nicenick1992@gmail.com'])
+
+#                 # Send email directly (synchronously) without Celery for testing
+#                 send_email_task(subject, message, recipient_list)
+
+#                 return JsonResponse({'status': 'Email has been sent directly.'})
+#             except Exception as e:
+#                 return JsonResponse({'error': str(e)}, status=500)
+        
+#         return JsonResponse({'error': 'Invalid request method.'}, status=400)
