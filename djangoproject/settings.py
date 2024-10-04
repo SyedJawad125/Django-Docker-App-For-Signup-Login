@@ -86,45 +86,52 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'djangoproject.wsgi.application'
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
-# Function to wait for the database to be ready
-def wait_for_db():
-    db_up = False
-    while not db_up:
-        try:
-            conn = psycopg2.connect(
-                dbname=os.getenv('DB_NAME', 'mydb'),
-                user=os.getenv('DB_USER', 'mydb'),
-                password=os.getenv('DB_PASSWORD', 'admin'),
-                host=os.getenv('DB_HOST', 'db'),
-                port=os.getenv('DB_PORT', '5432')
-            )
-            db_up = True
-        except psycopg2.OperationalError as e:
-            if "does not exist" in str(e):
-                print('Database does not exist yet, waiting for 5 seconds...')
-            else:
-                print('Database unavailable, waiting for 5 seconds...')
-            time.sleep(10)
-    conn.close()
+# # Function to wait for the database to be ready
+# def wait_for_db():
+#     db_up = False
+#     while not db_up:
+#         try:
+#             conn = psycopg2.connect(
+#                 dbname=os.getenv('DB_NAME', 'mydb'),
+#                 user=os.getenv('DB_USER', 'mydb'),
+#                 password=os.getenv('DB_PASSWORD', 'admin'),
+#                 host=os.getenv('DB_HOST', 'db'),
+#                 port=os.getenv('DB_PORT', '5432')
+#             )
+#             db_up = True
+#         except psycopg2.OperationalError as e:
+#             if "does not exist" in str(e):
+#                 print('Database does not exist yet, waiting for 5 seconds...')
+#             else:
+#                 print('Database unavailable, waiting for 5 seconds...')
+#             time.sleep(10)
+#     conn.close()
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('DB_NAME', 'mydb'),
+#         'USER': os.getenv('DB_USER', 'mydb'),
+#         'PASSWORD': os.getenv('DB_PASSWORD', 'admin'),
+#         'HOST': os.getenv('DB_HOST', 'db'),
+#         'PORT': os.getenv('DB_PORT', '5432'),
+#     }
+# }
+
+# # Wait for the database to be ready
+# wait_for_db()
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'mydb'),
-        'USER': os.getenv('DB_USER', 'mydb'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'admin'),
-        'HOST': os.getenv('DB_HOST', 'db'),
-        'PORT': os.getenv('DB_PORT', '5432'),
-    }
-}
 
-# Wait for the database to be ready
-wait_for_db()
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -166,12 +173,25 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# Redis settings for Celery
-CELERY_BROKER_URL = 'redis://redis:6379/0'  # Ensure this matches the Redis service in docker-compose
-CELERY_RESULT_BACKEND = 'redis://redis:6379/0'  # Optional, but useful if you want to store results in Redis
+# # Redis settings for Celery
+# CELERY_BROKER_URL = 'redis://redis:6379/0'  # Ensure this matches the Redis service in docker-compose
+# CELERY_RESULT_BACKEND = 'redis://redis:6379/0'  # Optional, but useful if you want to store results in Redis
 
-# Optional Celery settings:
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'UTC'  # Adjust if you have a different timezone
+# # Optional Celery settings:
+# CELERY_ACCEPT_CONTENT = ['json']
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_TIMEZONE = 'UTC'  # Adjust if you have a different timezone
+
+
+# Celery settings
+CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Redis as broker
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'  # Store results in Redis
+
+# Email backend settings (for sending emails)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Use your email provider
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'syedjawadali92@gmail.com'  # Your email
+EMAIL_HOST_PASSWORD = 'ctpgxfclwyucweni'  # Your email password

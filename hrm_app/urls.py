@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import AttendanceViews, DepartmentViews, RankViews, SalaryViews, empployeeViews
+from .views import AttendanceViews, DepartmentViews, RankViews, SalaryViews, SendEmailViews, empployeeViews
 
 urlpatterns = [
 
@@ -27,6 +27,8 @@ path('attendance', AttendanceViews.as_view({"get":"get_attendance",
                             "post":"post_attendance",
                             "patch":"update_attendance",
                             "delete":"delete_attendance"})),
+
+path('celerys', SendEmailViews.as_view({"post":"post_celerys"})),
                             
 ]
 

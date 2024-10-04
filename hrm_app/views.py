@@ -93,3 +93,20 @@ class AttendanceViews(ModelViewSet):
     
     def delete_attendance(self, request):
         return attendance_controller.delete_attendance(request)
+    
+from django.http import JsonResponse
+from .tasks import send_email_task
+
+class SendEmailViews(ModelViewSet):
+
+    def send_email_view(request):
+        if request.method == 'POST':
+            subject = request.POST.get('subject', 'Test Email')
+            message = request.POST.get('message', 'This is a test email.')
+            recipient_list = request.POST.getlist('recipients', ['nicenick1992@gmail.com.com'])
+
+            # Call the Celery task to send the email
+            send_email_task.delay(subject, message, recipient_list)
+
+            return JsonResponse({'status': 'Email has been sent to the Celery worker.'})
+        return JsonResponse({'error': 'Invalid request method.'}, status=400)
